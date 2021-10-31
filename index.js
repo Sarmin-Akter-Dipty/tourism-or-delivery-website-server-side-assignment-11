@@ -44,6 +44,10 @@ async function run() {
             const item = await itemsCollection.findOne(query);
             res.json(item)
         })
+        app.get("/allOrders", async (req, res) => {
+            const result = await orderCollection.find({}).toArray();
+            res.json(result);
+        });
         //POST API
         app.post('/items', async (req, res) => {
             const item = req.body;
@@ -56,13 +60,21 @@ async function run() {
             const order = req.body;
             const result = await orderCollection.insertOne(order)
             console.log('order', result);
+            res.json(result)
         })
-        //Delete api
+        // // Delete api
         app.delete('/items/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
             const query = { _id: ObjectId(id) };
-            const result = await itemsCollection.deleteOne(query);
+            const result = await orderCollection.deleteOne(query);
+            res.json(result)
+        })
+        app.delete('/allOrders/:id', async (req, res) => {
+            const id = req.params.email;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
             res.json(result)
         })
 
