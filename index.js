@@ -62,20 +62,50 @@ async function run() {
             console.log('order', result);
             res.json(result)
         })
-        // // Delete api
+        // Delete api(Admin->manageitems)
         app.delete('/items/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const result = await itemsCollection.deleteOne(query);
+            res.json(result)
+        })
+        app.delete('/allOrders/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.json(result)
         })
-        app.delete('/allOrders/:id', async (req, res) => {
-            const id = req.params.email;
-            console.log(id);
-            const query = { _id: ObjectId(id) };
-            const result = await orderCollection.deleteOne(query);
-            res.json(result)
+
+        //my order
+        app.get('/myorders', async (req, res) => {
+            const query = { email: req.query.email }
+            const cursor = await orderCollection.find(query).toArray()
+            res.json(cursor)
+
+        })
+        app.put('/myorders', async (req, res) => {
+            const filter = { _id: ObjectId(req.query.id) }
+            const options = { upsert: true }
+            const updateDocument = {
+                $set: {
+                    status: 'Approved'
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updateDocument, options)
+            res.send(result)
+        })
+        app.put('/allorders', async (req, res) => {
+            const filter = { _id: ObjectId(req.query.id) }
+            const options = { upsert: true }
+            const updateDocument = {
+                $set: {
+                    status: 'Approved'
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updateDocument, options)
+            res.send(result)
         })
 
 
